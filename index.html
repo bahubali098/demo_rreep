@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c-ide</title>
+    <script src="codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <script src="codemirror/mode/clike/clike.js"></script>
+    <link href="codemirror/theme/dracula.css" rel="stylesheet" />
+    <script src="codemirror/addon/edit/closebrackets.js"></script>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: rgb(254, 252, 252);
+            color: rgb(32, 249, 13);
+            /* color: rgb(10, 10, 10); */
+        }
+
+        .dark-mode {
+            background-color: black;
+            color: white;
+        }
+
+        .container {
+            padding-top: 25px;
+            padding-left: 25px;
+            background-color: black;
+        }
+
+        button {
+            width: 50px;
+            height: 30px;
+            border-radius: 5px;
+            background-color: green;
+            color: #ccc;
+            margin-right: 10px;
+        }
+
+        .dark-mode-button {
+            width: 50px;
+            height: 30px;
+            border-radius: 5px;
+            background-color: #333;
+            color: #ccc;
+        }
+
+        .sidebar {
+            display: flex;
+            height: 100%;
+            border: 20px solid rgb(212, 183, 183);
+        }
+
+        .left,
+        .right {
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .separator {
+            cursor: col-resize;
+            width: 10px;
+            height: 100%;
+            background-color: #ccc;
+        }
+
+        .left {
+            background-color: rgba(40, 42, 54, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .right {
+            padding-left: 15px;
+            padding-right: 15px;
+            background-color: rgba(40, 42, 54, 255);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <button>run</button>
+            <button class="dark-mode-button" onclick="myFunction()">Mode</button>
+        </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="left" id="left">
+            <textarea id="editor">
+ #include <stdio.h>
+int main() {
+// printf() displays the string inside quotation
+printf("Hello, World!");
+return 0;
+}
+            </textarea>
+        </div>
+        <div class="separator" id="separator"></div>
+        <div class="right" id="right">
+            Output window
+        </div>
+    </div>
+    <script>
+        const separator = document.getElementById('separator');
+        const left = document.getElementById('left');
+        const right = document.getElementById('right');
+        const sidebar = document.getElementById('sidebar');
+
+        let isResizing = false;
+
+        separator.addEventListener('mousedown', function (e) {
+            isResizing = true;
+            document.addEventListener('mousemove', resize);
+        });
+
+        document.addEventListener('mouseup', function () {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+        });
+
+        function resize(e) {
+            if (isResizing) {
+                const x = e.pageX - sidebar.offsetLeft;
+                const percentage = (x / sidebar.offsetWidth) * 100;
+                left.style.width = percentage + '%';
+                right.style.width = (100 - percentage) + '%';
+            }
+        }
+
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+            mode: "text/x-c++src",
+            theme: "dracula",
+            lineNumbers: true,
+            autoCloseBrackets: true,
+        });
+
+    </script>
+
+    <script>
+        window.addEventListener('resize', function () {
+            var width = document.getElementById('left').offsetWidth;
+            var height = document.getElementById('left').offsetHeight;
+            editor.setSize(width, height);
+        });
+
+        window.dispatchEvent(new Event('resize'));
+
+        // Set font size
+        document.body.style.fontSize = '20px';
+    </script>
+
+
+
+</body>
+
+</html>
